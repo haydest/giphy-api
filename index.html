@@ -1,18 +1,86 @@
 <!DOCTYPE html>
 <head>
+    <title>giphy api</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 </head>
 <body>
+  <div id="button-div"></div>
+  <br>
+  <div>
+  <form id="search-div">
+    <input id="gif-search" type="text">
+    <button type="submit" id="submit">submit</button>
+  </form>
+  </div>
+  <hr>
+  <div id="gif-div"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
-      var queryURL = "https://api.giphy.com/v1/gifs/random?api_key=BNthW3OttexM3ngbNqQo2xDKI78wWOaO&tag=&rating=G";
 
-      $.ajax({
-      url: queryURL,
-      method: "GET"
-    }).then(function(response) {
-      console.log(response);
-    });
+$(document).ready(function (){
+
+var buttonsArray = [
+  'zack braff',
+  'cute dog',
+];
+var userInput = $("#gif-search");
+
+makeButtons();
+
+function makeButtons() {
+
+    $("#button-div").empty();
+    
+    for (i=0; i<buttonsArray.length; i++) {
+        $("#button-div").append(`<button class="gif-button">${buttonsArray[i]}</button>`); 
+    };
+};
+
+$("#submit").on("click", function() {
+
+        buttonsArray.push(userInput.val().trim());
+        makeButtons();
+});
+
+
+$(".gif-button").on("click", function(){
+
+var newGif = $(this).text();
+const queryURL = `https://api.giphy.com/v1/gifs/search?q=${newGif}&api_key=BNthW3OttexM3ngbNqQo2xDKI78wWOaO`;
+
+$.ajax({
+    url: queryURL,
+    method: "GET"
+}).then(function(response){
+    console.log(response);
+      const pausedGIF = response.data.images.fixed_height_still.url;
+      const animatedGIF = response.data.images.fixed_height.url;
+      const title = response.data.title.text();
+      const rating = response.data.rating.toUpperCase().text();
+            
+      $("#gif-div").prepend(
+        `<div>
+          <span class="rating">${title}<br>RATING: ${rating}</span>
+          <img class="gif" src"${animatedGIF}">
+        </div>`
+      );   
+  });
+});
+
+$(".gif").on("click", function() {
+var state = $(this).attr("data-state");
+console.log($(this).attr("src"));
+console.log($(this).attr("data-state"));
+if (state === "still") {
+  $(this).attr("src", $(this).attr("data-animate"));
+  $(this).attr("data-state", "animate");
+} else {
+  $(this).attr("src", $(this).attr("data-still"));
+  $(this).attr("data-state", "still");
+}
+});
+});
+
     </script>
 
 </body>
