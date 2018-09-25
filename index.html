@@ -23,27 +23,31 @@ var buttonsArray = [
   'zack braff',
   'cute dog',
 ];
-var userInput = $("#gif-search");
+var userInput = $("#gif-search").val().trim();
 
 makeButtons();
 
 function makeButtons() {
-
-    $("#button-div").empty();
     
-    for (i=0; i<buttonsArray.length; i++) {
+    for (var i=0; i<buttonsArray.length; i++) {
         $("#button-div").append(`<button class="gif-button">${buttonsArray[i]}</button>`); 
     };
 };
 
 $("#submit").on("click", function() {
-
-        buttonsArray.push(userInput.val().trim());
-        makeButtons();
+  event.preventDefault();
+  if (userInput != null) {
+    buttonsArray.push(userInput);
+    console.log(buttonsArray);
+    var button = $(`<button class="gif-button" data-name="${userInput}>${userInput}</button>`);  
+    $("#button-div").append(button);
+  }
+  else {
+    alert("please enter text");
+  }
 });
 
-
-$(".gif-button").on("click", function(){
+$(".gif-button").on("click", function() {
 
 var newGif = $(this).text();
 const queryURL = `https://api.giphy.com/v1/gifs/search?q=${newGif}&api_key=BNthW3OttexM3ngbNqQo2xDKI78wWOaO`;
